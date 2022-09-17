@@ -26,23 +26,25 @@ export function EmojiPicker(props, ref) {
 
   useEffect(() => {
     async function data() {
-      const allEmojis = await allEmojies();
+      //const allEmojis = await allEmojies();
       //setcategories(cat)()
 
       const theCat = await firtsEmoji()
       const characters = theCat.map(el=>el.character)
       setcategories(characters);
       setAllCategories(theCat)
+      //setEmojis(theCat)
       
       asignacion = theCat.map((el,index)=>el = index)
 
-      const emocat = await emojiForCategories(selecction);
-      setEmojis(emocat);
-      setAllEmojis(emocat);
-
+      const TodasCatSeparadas = await emojiForCategories();
+      setEmojis(()=>TodasCatSeparadas);
+      setAllEmojis(TodasCatSeparadas);
+      
       const allCategories = await emojiForCategories()
       //setAllCategories(allCategories)
     }
+    console.log("🚀 ~ file: EmojiPicker.jsx ~ line 43 ~ data ~ emojis", emojis)
 
     data();
 
@@ -61,12 +63,13 @@ export function EmojiPicker(props, ref) {
 
   function handleSearch(e) {
     const q = e.target.value.toLocaleLowerCase();
-
+    console.log(q);
+    console.log(emojis[id]);
     if (!!q) {
-      const search = emojis.filter((el) =>
+      const search = emojis[id].filter((el) =>
         el.slug.toLocaleLowerCase().includes(q)
       );
-      setEmojis(search);
+     setEmojis([search]);
     } else {
       setEmojis(allEmojis);
     }
@@ -91,14 +94,14 @@ export function EmojiPicker(props, ref) {
     obtenerDatos(e.target.value)
   }
 
+  /**Obtenemos los datos y enviamos la id a setID */
+
   function obtenerDatos(ele){
-      
     const res = allCategories.find(cat => {
       if(cat.character == ele){
         return cat.id
       }
     })
-    console.log("🚀 ~ file: EmojiPicker.jsx ~ line 101 ~ res ~ cat", res)
 
     setId(res.id)
 
@@ -106,16 +109,21 @@ export function EmojiPicker(props, ref) {
 
   return (
     <div ref={containerRef} className={style.inputContainer}>
+
+      {emojis.length >0 ? 
       <button className={style.emojiPickerButton} onClick={handleClickOpen}>
         😁
       </button>
+      :<h2>Loading...</h2>
+      
+    }
       {isOpen ? (
         <div className={style.emojiPickerContainer}>
           <div className={style.containerbtn}>
             {categori.map((el, index) => (
               <div key={index}>
                 <input
-                  className="containerbtn"
+                  className={style.containerbtn}
                   type="button"
                   onClick={handleClickoption}
                   value={el}
@@ -128,7 +136,6 @@ export function EmojiPicker(props, ref) {
           <div className={style.emojisList}>
 
             {
-
             emojis[id].map((el,index)=>{
               return(
               <EmojiBtn
@@ -152,15 +159,3 @@ export function EmojiPicker(props, ref) {
 
 export default forwardRef(EmojiPicker);
 
-// function EmojiPickerContainer() {
-//   return (
-//     <div>
-//       <EmojiSearch onSearch={handleSearch} />
-//       <div>
-//         {emojiList.map((el) => (
-//           <div key={el.id}>{el.symbol}</div>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// }

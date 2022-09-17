@@ -66,6 +66,7 @@ export async function emojiForCategories() {
       const res = await data.json();
       obj.push(res) 
     }
+    console.log("🚀 ~ file: data.js ~ line 71 ~ emojiForCategories ~ obj", obj)
     return obj;
   }
 
