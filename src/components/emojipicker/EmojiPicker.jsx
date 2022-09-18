@@ -7,7 +7,6 @@ import { EmojiSearch } from "./EmojiSearch";
 /**Styles */
 import style from "./style.module.scss";
 /**data */
-import { allEmojies } from "./data";
 
 export function EmojiPicker(props, ref) {
   const [isOpen, setIsOpene] = useState(false);
@@ -30,16 +29,12 @@ export function EmojiPicker(props, ref) {
       const characters = theCat.map(el=>el.character)
       setcategories(characters);
       setAllCategories(theCat)
-      //setEmojis(theCat)
-      
       asignacion = theCat.map((el,index)=>el = index)
 
       const TodasCatSeparadas = await emojiForCategories();
       setEmojis(TodasCatSeparadas);
       setAllEmojis(TodasCatSeparadas);
-      
-      const allCategories = await emojiForCategories()
-      //setAllCategories(allCategories)
+
     }
     
     data();
@@ -54,20 +49,20 @@ export function EmojiPicker(props, ref) {
       }, []);
    
       
-  function handleClickOpen() {
-    setIsOpene(!isOpen);
-  }
-
-  function handleSearch(e) {
+      function handleClickOpen() {
+        setIsOpene(!isOpen);
+      }
+      
+      function handleSearch(e) {
     console.log("🚀 ~ file: EmojiPicker.jsx ~ line 43 ~ data ~ emojis", emojis)
     console.log("🚀 ~ file: EmojiPicker.jsx ~ line 43 ~ data ~ ALLL", allEmojis)
-
+        
     try {
       const q = e.target.value.toLocaleLowerCase();
       console.log(q);
       console.log(emojis[id]);
       if (!!q) {
-        console.log('ingresooooo');
+
         const search = emojis[id].filter((el) =>
           el.slug.toLocaleLowerCase().includes(q)
         );
@@ -75,11 +70,9 @@ export function EmojiPicker(props, ref) {
        setEmojis(()=>[search]);
        return
       } else {
-        console.log('out');
         setEmojis(()=>allEmojis);
       }
       
-      console.log(66,emojis[id]);
       
     } catch (error) {
         console.log('mi error',error);
@@ -102,27 +95,27 @@ export function EmojiPicker(props, ref) {
   }
 
   function handleClickoption(e) {
-    console.log(e.target.value);
-    // setSelection(e.target.value);
     obtenerDatos(e.target.value)
   }
 
   /**Obtenemos los datos y enviamos la id a setID */
 
   function obtenerDatos(ele){
-    const res = allCategories.find(cat => {
-      if(cat.character == ele){
-        
-        return cat.id
-      }
-    })
-    
-    setId(()=>res.id)
+    console.log('ele',allCategories[id].id==0);
+    console.log('ele',ele);
+
+    try {
+      
+      const res = allCategories.find(cat => cat.character == ele)
+      
+      console.log('res.id',res);
+      setId(()=>res?.id)
+    } catch (error) {
+      console.log('error obtener datos',error);
+    } 
     
     
   }
-  console.log("🚀 ~ file: EmojiPicker.jsx ~ line 43 ~ data ~ emojis", emojis[id])
-  console.log("🚀 ~ file: EmojiPicker.jsx ~ line 43 ~ data ~ ALLL", allEmojis)
 
   return (
     <div ref={containerRef} className={style.inputContainer}>
@@ -153,9 +146,8 @@ export function EmojiPicker(props, ref) {
           <div className={style.emojisList}>
 
             {
-            emojis.map((el,index)=>{
-              el.map(el =>{
-                console.log(9,el);
+            emojis[id].map((el,index)=>{
+        
                 return(
                 <EmojiBtn
                 key={index}
@@ -164,7 +156,7 @@ export function EmojiPicker(props, ref) {
                 >
                 </EmojiBtn>
                 )
-              })
+
             })
           }
 
