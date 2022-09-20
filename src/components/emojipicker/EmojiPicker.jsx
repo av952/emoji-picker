@@ -7,6 +7,7 @@ import { EmojiSearch } from "./EmojiSearch";
 /**Styles */
 import style from "./style.module.scss";
 /**data */
+//asignacion =[]
 
 export function EmojiPicker(props, ref) {
   const [isOpen, setIsOpene] = useState(false);
@@ -21,8 +22,8 @@ export function EmojiPicker(props, ref) {
   const [load, setLoad] = useState(true);
   //para resetear el value del search
   const [value, setValue] = useState("");
-
-  let asignacion = [];
+  //nuevo array con los elementos seleccionados
+  const[arrEmoji,setArrEmoji]= useState([])
 
   useEffect(() => {
     async function data() {
@@ -33,13 +34,16 @@ export function EmojiPicker(props, ref) {
       const characters = theCat.map((el) => el.character);
       setcategories(characters);
       setAllCategories(theCat);
-      asignacion = theCat.map((el, index) => (el = index));
+      //asignacion = theCat.map((el, index) => (el = index));
 
       const TodasCatSeparadas = await emojiForCategories();
       setEmojis(TodasCatSeparadas);
       setAllEmojis(TodasCatSeparadas);
+
+      NewArrEmoji()
     }
 
+    
     data();
 
     // window.addEventListener('click', (e)=>{
@@ -106,7 +110,6 @@ export function EmojiPicker(props, ref) {
   function handleClickoption(e) {
     setValue("");
     setEmojis(allEmojis);
-    console.log(57, value);
     setLoad(true);
     obtenerDatos(e.target.value);
   }
@@ -120,13 +123,27 @@ export function EmojiPicker(props, ref) {
       const res = allCategories.find((cat) => cat.character == ele);
       //alamacenamos la respuesta en el useState ID
       setId(() => res?.id);
+      NewArrEmoji()
     } catch (error) {
       console.log("error obtener datos", error);
     }
   }
 
+  /**
+   * Generar nuevo array
+   */
+  function NewArrEmoji(){
+    setArrEmoji(()=>allEmojis[id])
+  }
+  if(arrEmoji){
+
+    console.log(111,arrEmoji[0]?.character);
+  }
+
+  /////////////
+
   function LoadEmojis() {
-    return emojis[id].map((el, index) => {
+    return arrEmoji.map((el, index) => {
       return (
         <EmojiBtn
           key={index}
