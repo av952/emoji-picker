@@ -38,25 +38,30 @@ export function EmojiPicker(props, ref) {
 
       const TodasCatSeparadas = await emojiForCategories();
       setEmojis(TodasCatSeparadas);
-      setAllEmojis(TodasCatSeparadas);
+      setAllEmojis(()=>TodasCatSeparadas);
 
-      NewArrEmoji()
+
     }
-
+  
     
     data();
-
+    
     // window.addEventListener('click', (e)=>{
+      
+      //     if(!containerRef.current.contains(e.target)){
+        //         setIsOpene(false)
+        //         setAllEmojis(allEmojies)
+        //     }
+        // })
+      }, []);
 
-    //     if(!containerRef.current.contains(e.target)){
-    //         setIsOpene(false)
-    //         setAllEmojis(allEmojies)
-    //     }
-    // })
-  }, []);
+      useEffect(()=>{
+        setArrEmoji(()=>allEmojis[id])
+      },[id])
 
   function handleClickOpen() {
     setIsOpene(!isOpen);
+    setId(()=>0)
   }
 
   /**
@@ -66,14 +71,11 @@ export function EmojiPicker(props, ref) {
   function handleSearch(e) {
     setLoad(false);
     setValue(e.target.value);
-    console.log(load);
     
     try {
       const q = e.target.value.toLocaleLowerCase();
       
       try {
-        console.log('handle emojis',emojis[0]);
-        console.log('handle emojis 2',allEmojis);
         if (!!q) {
           const search = arrEmoji.filter((el) =>
           el.slug.toLocaleLowerCase().includes(q)
@@ -109,7 +111,7 @@ export function EmojiPicker(props, ref) {
 
   function handleClickoption(e) {
     setValue("");
-    setEmojis(allEmojis);
+    //setEmojis(arrEmoji);
     setLoad(true);
     obtenerDatos(e.target.value);
   }
@@ -123,7 +125,7 @@ export function EmojiPicker(props, ref) {
       const res = allCategories.find((cat) => cat.character == ele);
       //alamacenamos la respuesta en el useState ID
       setId(() => res?.id);
-      NewArrEmoji()
+      //NewArrEmoji()
     } catch (error) {
       console.log("error obtener datos", error);
     }
@@ -132,18 +134,14 @@ export function EmojiPicker(props, ref) {
   /**
    * Generar nuevo array
    */
-  function NewArrEmoji(){
-    setArrEmoji(()=>allEmojis[id])
-  }
-  if(arrEmoji){
-
-    console.log(111,arrEmoji[0]?.character);
-  }
+  // function NewArrEmoji(){
+  //   setArrEmoji(()=>allEmojis[id])
+  // }
 
   /////////////
 
   function LoadEmojis() {
-    return arrEmoji.map((el, index) => {
+    return arrEmoji?.map((el, index) => {
       return (
         <EmojiBtn
           key={index}
@@ -196,8 +194,8 @@ export function EmojiPicker(props, ref) {
           <EmojiSearch valor={value} onSearch={handleSearch} />
 
           <div className={style.emojisList}>
-            {/* Hace falta que cargue vistas diferentes para cuando se hace la busqueda y cuando se muestran todos los emojis */}
             {load ? <LoadEmojis /> : <Search />}|
+
           </div>
         </div>
       ) : (
