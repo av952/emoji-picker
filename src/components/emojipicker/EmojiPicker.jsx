@@ -75,7 +75,7 @@ export function EmojiPicker(props, ref) {
         console.log('handle emojis',emojis[0]);
         console.log('handle emojis 2',allEmojis);
         if (!!q) {
-          const search = emojis[0].filter((el) =>
+          const search = arrEmoji.filter((el) =>
           el.slug.toLocaleLowerCase().includes(q)
           );
           setEmojis(()=>[search]);
