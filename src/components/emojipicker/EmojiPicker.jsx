@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useRef, useState } from "react";
 import { forwardRef } from "react";
-import {firtsEmoji, emojiForCategories } from "./data";
+import { firtsEmoji, emojiForCategories } from "./data";
 import { EmojiBtn } from "./EmojiBtn";
 import { EmojiSearch } from "./EmojiSearch";
 /**Styles */
@@ -15,72 +15,81 @@ export function EmojiPicker(props, ref) {
   const [categori, setcategories] = useState([]);
   const [allEmojis, setAllEmojis] = useState([]);
 
-  const [allCategories,setAllCategories]=useState([])
-  const [id,setId]= useState(0)
+  const [allCategories, setAllCategories] = useState([]);
+  const [id, setId] = useState(0);
+  //cargar emojis
+  const [load, setLoad] = useState(true);
+  //para resetear el value del search
+  const [value, setValue] = useState("");
 
-  let asignacion = []
+  let asignacion = [];
 
   useEffect(() => {
     async function data() {
       //const allEmojis = await allEmojies();
       //setcategories(cat)()
 
-      const theCat = await firtsEmoji()
-      const characters = theCat.map(el=>el.character)
+      const theCat = await firtsEmoji();
+      const characters = theCat.map((el) => el.character);
       setcategories(characters);
-      setAllCategories(theCat)
-      asignacion = theCat.map((el,index)=>el = index)
+      setAllCategories(theCat);
+      asignacion = theCat.map((el, index) => (el = index));
 
       const TodasCatSeparadas = await emojiForCategories();
       setEmojis(TodasCatSeparadas);
       setAllEmojis(TodasCatSeparadas);
-
     }
-    
+
     data();
-    
+
     // window.addEventListener('click', (e)=>{
-      
-      //     if(!containerRef.current.contains(e.target)){
-        //         setIsOpene(false)
-        //         setAllEmojis(allEmojies)
-        //     }
-        // })
-      }, []);
-   
-      
-      function handleClickOpen() {
-        setIsOpene(!isOpen);
-      }
-      
-      function handleSearch(e) {
-    console.log("🚀 ~ file: EmojiPicker.jsx ~ line 43 ~ data ~ emojis", emojis)
-    console.log("🚀 ~ file: EmojiPicker.jsx ~ line 43 ~ data ~ ALLL", allEmojis)
-        
+
+    //     if(!containerRef.current.contains(e.target)){
+    //         setIsOpene(false)
+    //         setAllEmojis(allEmojies)
+    //     }
+    // })
+  }, []);
+
+  function handleClickOpen() {
+    setIsOpene(!isOpen);
+  }
+
+  /**
+   * BUSCAR LOS EMOJIS
+   */
+
+  function handleSearch(e) {
+    setLoad(false);
+    setValue(e.target.value);
+
     try {
       const q = e.target.value.toLocaleLowerCase();
-      console.log(q);
+      console.log('q',q);
       console.log(emojis[id]);
-      if (!!q) {
 
-        const search = emojis[id].filter((el) =>
-          el.slug.toLocaleLowerCase().includes(q)
-        );
-        console.log(4444,[search][id]);
-       setEmojis(()=>[search]);
-       return
-      } else {
-        setEmojis(()=>allEmojis);
+      try {
+        if (!!q) {
+          const search = emojis[id].filter((el) =>
+            el.slug.toLocaleLowerCase().includes(q)
+          );
+          console.log(4444, [search]);
+          setEmojis([search]);
+          return;
+        } else {
+          setEmojis(allEmojis);
+          setLoad(true);
+        }
+      } catch (error) {
+        console.log(error);
       }
-      
-      
     } catch (error) {
-        console.log('mi error',error);
+      console.log("mi error", error);
     }
-
   }
 
   function handleOnclickEmoji(emoji) {
+    setValue("");
     //obtner la posición del elemento
     const cursorPosition = ref.current.selectionStart;
 
@@ -95,38 +104,66 @@ export function EmojiPicker(props, ref) {
   }
 
   function handleClickoption(e) {
-    obtenerDatos(e.target.value)
+    setValue("");
+    setEmojis(allEmojis);
+    console.log(57, value);
+    setLoad(true);
+    obtenerDatos(e.target.value);
   }
 
   /**Obtenemos los datos y enviamos la id a setID */
 
-  function obtenerDatos(ele){
-    console.log('ele',allCategories[id].id==0);
-    console.log('ele',ele);
+  function obtenerDatos(ele) {
+    console.log("ele", allCategories[id].id == 0);
+    console.log("ele", ele);
 
     try {
-      
-      const res = allCategories.find(cat => cat.character == ele)
-      
-      console.log('res.id',res);
-      setId(()=>res?.id)
+      const res = allCategories.find((cat) => cat.character == ele);
+
+      console.log("res.id", res);
+      setId(() => res?.id);
     } catch (error) {
-      console.log('error obtener datos',error);
-    } 
-    
-    
+      console.log("error obtener datos", error);
+    }
   }
+
+  function LoadEmojis() {
+    return emojis[id].map((el, index) => {
+      return (
+        <EmojiBtn
+          key={index}
+          emoji={el.character}
+          onclick={handleOnclickEmoji}
+        ></EmojiBtn>
+      );
+    });
+  }
+
+  function Search() {
+    return emojis[0].map((el, index) => {
+      return (
+        <EmojiBtn
+          key={index}
+          emoji={el.character}
+          onclick={handleOnclickEmoji}
+        ></EmojiBtn>
+      );
+    });
+  }
+
+  /**
+   * RETORNO DE INFORMACIÓN
+   */
 
   return (
     <div ref={containerRef} className={style.inputContainer}>
-
-      {emojis.length >0 ? 
-      <button className={style.emojiPickerButton} onClick={handleClickOpen}>
-        😁
-      </button>
-      :<h2>Loading...</h2>
-      
-    }
+      {emojis.length > 0 ? (
+        <button className={style.emojiPickerButton} onClick={handleClickOpen}>
+          😁
+        </button>
+      ) : (
+        <h2>Loading...</h2>
+      )}
       {isOpen ? (
         <div className={style.emojiPickerContainer}>
           <div className={style.containerbtn}>
@@ -141,25 +178,11 @@ export function EmojiPicker(props, ref) {
               </div>
             ))}
           </div>
-          <EmojiSearch onSearch={handleSearch} />
+          <EmojiSearch valor={value} onSearch={handleSearch} />
 
           <div className={style.emojisList}>
-
-            {
-            emojis[id].map((el,index)=>{
-        
-                return(
-                <EmojiBtn
-                key={index}
-                emoji={el.character}
-                onclick ={handleOnclickEmoji}
-                >
-                </EmojiBtn>
-                )
-
-            })
-          }
-
+            {/* Hace falta que cargue vistas diferentes para cuando se hace la busqueda y cuando se muestran todos los emojis */}
+            {load ? <LoadEmojis /> : <Search />}|
           </div>
         </div>
       ) : (
@@ -170,4 +193,3 @@ export function EmojiPicker(props, ref) {
 }
 
 export default forwardRef(EmojiPicker);
-
