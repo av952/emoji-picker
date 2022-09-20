@@ -62,24 +62,24 @@ export function EmojiPicker(props, ref) {
   function handleSearch(e) {
     setLoad(false);
     setValue(e.target.value);
-
+    console.log(load);
+    
     try {
       const q = e.target.value.toLocaleLowerCase();
-      console.log('q',q);
-      console.log(emojis[id]);
-
+      
       try {
+        console.log('handle emojis',emojis[0]);
+        console.log('handle emojis 2',allEmojis);
         if (!!q) {
-          const search = emojis[id].filter((el) =>
-            el.slug.toLocaleLowerCase().includes(q)
+          const search = emojis[0].filter((el) =>
+          el.slug.toLocaleLowerCase().includes(q)
           );
-          console.log(4444, [search]);
-          setEmojis([search]);
-          return;
+          setEmojis(()=>[search]);
         } else {
           setEmojis(allEmojis);
           setLoad(true);
         }
+
       } catch (error) {
         console.log(error);
       }
@@ -114,13 +114,11 @@ export function EmojiPicker(props, ref) {
   /**Obtenemos los datos y enviamos la id a setID */
 
   function obtenerDatos(ele) {
-    console.log("ele", allCategories[id].id == 0);
-    console.log("ele", ele);
 
     try {
+      //buscamos entre todos los elementos de todas las categorias, el que corresponda con el emoji seleccionado y extraemos el id, con el que obtenemos la pocición de los elementos dentro del array.
       const res = allCategories.find((cat) => cat.character == ele);
-
-      console.log("res.id", res);
+      //alamacenamos la respuesta en el useState ID
       setId(() => res?.id);
     } catch (error) {
       console.log("error obtener datos", error);
